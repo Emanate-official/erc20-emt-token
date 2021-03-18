@@ -7,6 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract MN8 is Ownable, ERC20 {
 
     constructor() ERC20("emanate", "MN8") {
-        
+        _mint(msg.sender, 10000000000000000);
     }
 }
