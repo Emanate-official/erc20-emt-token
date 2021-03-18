@@ -34,9 +34,10 @@ contract("MN8", (accounts) => {
       const name = await token.name();
       expect(name).to.be.equal("emanate");
 
-      const expected = new BN("1000000").mul(new BN("10").pow(decimals));
+      const expected = new BN("10000000000000000");
 
       const totalSupply = await token.totalSupply();
+      console.log(totalSupply);
       expect(totalSupply).to.be.equal("expected");
     });
   });
