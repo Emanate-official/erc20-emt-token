@@ -4,7 +4,7 @@ pragma solidity >=0.4.22 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract MN8 is Ownable, ERC20 {
+contract Token is Ownable, ERC20 {
 
     address immutable private _existing_holders;
     address immutable private _outlier_ventures;
@@ -14,7 +14,7 @@ contract MN8 is Ownable, ERC20 {
     address immutable private _advisors;
     address immutable private _curve;
 
-    constructor() ERC20("emanate", "MN8") {
+    constructor() Token("moda", "MODA") {
         _existing_holders = 0x0364eAA7C884cb5495013804275120ab023619A5;
         _outlier_ventures = 0x0364eAA7C884cb5495013804275120ab023619A5;
         _investors = 0x0364eAA7C884cb5495013804275120ab023619A5;
