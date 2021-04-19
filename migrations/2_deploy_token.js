@@ -1,5 +1,5 @@
-const MN8 = artifacts.require("MN8");
+const Token = artifacts.require("Token");
 
 module.exports = function (deployer) {
-  deployer.deploy(MN8);
+  deployer.deploy(Token);
 };

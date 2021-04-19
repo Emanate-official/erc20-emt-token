@@ -1,7 +1,9 @@
-pragma solidity ^0.6.0;
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.4.22 <0.9.0;
 
-import "./Ownable.sol";
-import "./SafeMath.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 struct Proposal {
     uint256 amount;
@@ -17,41 +19,40 @@ contract Grants is Ownable {
     using SafeMath for uint;
 
     mapping (uint256 => mapping(address => bool)) public votes;
+    mapping (address => uint256) public balances;
     Proposal[] public proposals;
 
-    address immutable erc20;
+    IERC20 immutable erc20; // Token
     address immutable foundation;
 
-    constant private uint256 duration = 10;
+    uint256 private constant duration = 10;
 
-    constructor(address _erc20, address _foundation) public {
-        erc20 = _erc20;
+    constructor(address _erc20, address _foundation) {
+        erc20 = IERC20(_erc20);
         foundation = _foundation;
     }
 
     function grant(address who, uint256 tokens) public onlyOwner() {
-        _balances[who] = _balances[who].add(tokens);
+        balances[who] = balances[who].add(tokens);
     }
 
     function revoke(address who, uint256 tokens) public onlyOwner() {
-        _balances[who] = _balances[who].sub(tokens);
+        balances[who] = balances[who].sub(tokens);
     }
 
-    function found(uint256 index, uint256 tokens) public {
-        _balances[who] = _balances[who].sub(tokens);
-        proposals[index].who = proposals[index].amount.add(tokens)
-    }
+    // function fund(uint256 index, uint256 tokens) public {
+    //     balances[who] = balances[who].sub(tokens);
+    //     proposals[index].who = proposals[index].amount.add(tokens);
+    // }
 
     function inVotingPeriod(uint index) public view returns (bool) {
-        return proposals[index].expires > now;
+        return proposals[index].expires > block.timestamp;
     }
 
-    function apply(uint256 amount) public returns(uint256) {
+    function applyForGrant(uint256 amount) public returns(uint256) {
         // Only token holders can apply
-        require(balanceOf(msg.sender) >= 1, "Need at least one token");
-
-        _balances[msg.sender] = _balances[msg.sender].sub(1);
-        Grant memory proposal = Proposal(amount, msg.sender, now + 10 days, 0, 0, 1, 1);
+        require(erc20.balanceOf(msg.sender) >= 1, "Need at least one token");
+        Proposal memory proposal = Proposal(amount, msg.sender, block.timestamp + 10 days, 0, 0, 1, 1);
         proposals.push(proposal);
 
         return proposals.length;
@@ -60,12 +61,12 @@ contract Grants is Ownable {
     function _vote(uint256 index, bool accept, uint256 amount) private {
         require(proposals[index].who != msg.sender, "Cannot vote on own proposal");
         require(votes[index][msg.sender] != true, "Cannot vote twice");
-        require(balanceOf(msg.sender) >= amount, "Need more tokens");
+        require(erc20.balanceOf(msg.sender) >= amount, "Need more tokens");
         require(inVotingPeriod(index), "Proposal closed for voting");
         require(amount >= proposals[index].min && proposals[index].max >= amount, "Amount outside the bounds.");
 
         votes[index][msg.sender] = true;
-        _balances[msg.sender] = _balances[msg.sender].sub(amount);
+        balances[msg.sender] = balances[msg.sender].sub(amount);
 
         if (accept) {
             proposals[index].accept = proposals[index].accept.add(amount);

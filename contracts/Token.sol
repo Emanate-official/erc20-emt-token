@@ -14,7 +14,13 @@ contract Token is Ownable, ERC20 {
     address immutable private _advisors;
     address immutable private _curve;
 
-    constructor() Token("moda", "MODA") {
+    uint256 private _holderCount;
+
+    function holderCount() public view returns (uint256) {
+        return _holderCount;
+    }
+
+    constructor() ERC20("moda", "MODA") {
         _existing_holders = 0x0364eAA7C884cb5495013804275120ab023619A5;
         _outlier_ventures = 0x0364eAA7C884cb5495013804275120ab023619A5;
         _investors = 0x0364eAA7C884cb5495013804275120ab023619A5;
@@ -31,4 +37,8 @@ contract Token is Ownable, ERC20 {
         _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 1200000 * 10 ** 18);
         _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 1500000 * 10 ** 18);
     }
+
+    // function mintWithCount(address who, uint256 amount) private {
+
+    // }
 }

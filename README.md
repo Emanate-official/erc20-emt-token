@@ -27,10 +27,6 @@ cd /path/to/project/files/
 npx truffle-flattener contracts/MN8.sol > build/MN8.flattened.sol
 ```
 
-Go to Etherscan (https://etherscan.io/) and load the contract. There will be a
-"verify" link. Click on this link and specify the following:
+## Verify 
 
-Contract Type: single file
-Contract Compiler Version: 0.6.0
-
-(There are now two other Contract Types for registering source code; multi-file, and json; these are experimental and will require more investigation).
+`truffle run verify Token --network kovan`
