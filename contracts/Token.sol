@@ -3,8 +3,10 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 
 contract Token is Ownable, ERC20 {
+    using SafeMath for uint;
 
     address immutable private _existing_holders;
     address immutable private _outlier_ventures;
@@ -14,7 +16,7 @@ contract Token is Ownable, ERC20 {
     address immutable private _advisors;
     address immutable private _curve;
 
-    uint256 private _holderCount;
+    uint256 private c;
 
     function holderCount() public view returns (uint256) {
         return _holderCount;
@@ -29,16 +31,20 @@ contract Token is Ownable, ERC20 {
         _advisors = 0x0364eAA7C884cb5495013804275120ab023619A5;
         _curve = 0x0364eAA7C884cb5495013804275120ab023619A5;
 
-        _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 2000000 * 10 ** 18);
-        _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 300000 * 10 ** 18);
-        _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 500000 * 10 ** 18);
-        _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 3500000 * 10 ** 18);
-        _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 1000000 * 10 ** 18);
-        _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 1200000 * 10 ** 18);
-        _mint(0x0364eAA7C884cb5495013804275120ab023619A5, 1500000 * 10 ** 18);
+        mintWithCount(0x0364eAA7C884cb5495013804275120ab023619A5, 2000000 * 10 ** 18);
+        mintWithCount(0x0364eAA7C884cb5495013804275120ab023619A5, 300000 * 10 ** 18);
+        mintWithCount(0x0364eAA7C884cb5495013804275120ab023619A5, 500000 * 10 ** 18);
+        mintWithCount(0x0364eAA7C884cb5495013804275120ab023619A5, 3500000 * 10 ** 18);
+        mintWithCount(0x0364eAA7C884cb5495013804275120ab023619A5, 1000000 * 10 ** 18);
+        mintWithCount(0x0364eAA7C884cb5495013804275120ab023619A5, 1200000 * 10 ** 18);
+        mintWithCount(0x0364eAA7C884cb5495013804275120ab023619A5, 1500000 * 10 ** 18);
     }
 
-    // function mintWithCount(address who, uint256 amount) private {
+    function mintWithCount(address who, uint256 amount) private {
+        if (balanceOf(who) == 0) {
+            _holderCount.add(1);
+        }
 
-    // }
+        _mint(who, amount);
+    }
 }
