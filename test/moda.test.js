@@ -1,4 +1,4 @@
-const MN8 = artifacts.require("MN8");
+const Token = artifacts.require("Token");
 
 const {
   BN,
@@ -10,35 +10,33 @@ const {
 
 const { expect } = require("chai");
 
-contract("MN8", (accounts) => {
-  const OWNER = accounts[0];
-  const ALICE = accounts[1];
-  const BOB = accounts[2];
-
-  const FAST_FORWARD = 60 * 60 * 48;
-  const ZERO_BALANCE = new BN(0);
-
-  const decimals = new BN("18");
-  
+contract("Token", (accounts) => {
   let token;
 
   beforeEach(async () => {
-    token = await MN8.new();
+    token = await Token.new();
   });
 
   describe("deployment", () => {
     it("should get standard ERC20 properties", async () => {
       const symbol = await token.symbol();
-      expect(symbol).to.be.equal("MN8");
+      expect(symbol).to.be.equal("MODA");
 
       const name = await token.name();
-      expect(name).to.be.equal("emanate");
+      expect(name).to.be.equal("moda");
 
       const decimals = new BN("18");
       const expected = new BN("10000000").mul(new BN("10").pow(decimals));
 
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.be.bignumber.equal(expected);
+    });
+
+    it("should have holder count as 1", async () => {
+      const actual = await token.holderCount();
+      const expected = new BN("1");
+
+      expect(actual).to.be.bignumber.equal(expected);
     });
   });
 });
