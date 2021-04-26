@@ -28,6 +28,7 @@ contract Grants is Ownable {
     uint256 private constant duration = 10;
 
     constructor(address _erc20, address _foundation) {
+        require(_erc20 != address(0) && _foundation != address(0), "Invalid address");
         erc20 = IERC20(_erc20);
         foundation = _foundation;
     }
