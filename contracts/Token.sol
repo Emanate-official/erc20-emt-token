@@ -42,7 +42,7 @@ contract Token is Ownable, ERC20 {
 
     function mintWithCount(address who, uint256 amount) private {
         if (balanceOf(who) == 0 && amount > 0) {
-            _holderCount.add(1);
+            _holderCount = _holderCount.add(1);
         }
 
         _mint(who, amount);
