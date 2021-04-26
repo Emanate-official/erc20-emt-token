@@ -32,9 +32,9 @@ module.exports = {
       skipDryRun: true,
     },
     development: {
-      host: "localhost", // Localhost (default: none)
-      port: 8545, // Standard Ethereum port (default: none)
-      network_id: "*" // Any network (default: none)
+      host: "localhost",
+      port: 8545,
+      network_id: "*"
     }
   },
 
@@ -46,7 +46,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.7.0"
+      version: "0.7.6"
     },
   },
   api_keys: {

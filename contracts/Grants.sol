@@ -22,7 +22,7 @@ contract Grants is Ownable {
 
     uint256 private _duration = 30; // In days
 
-    function duration() public returns (uint256) {
+    function duration() public view returns (uint256) {
         return _duration;
     }
 
@@ -48,7 +48,7 @@ contract Grants is Ownable {
         require(inFundingPeriod(index), "Not in funding period");
         require(proposals.length < index, "Invalid index");
         require(proposals[index].owner != address(0), "Invalid address");
-        erc20.transferFrom(msg.sender, proposals[index].owner, proposals[index].balance);
+        erc20.transferFrom(msg.sender, proposals[index].owner, amount);
     }
 
     function inFundingPeriod(uint256 index) public view returns (bool) {
@@ -58,7 +58,7 @@ contract Grants is Ownable {
     function addProposal(uint256 amount) public returns(uint256) {
         // Only token holders can apply
         require(erc20.balanceOf(msg.sender) >= 1, "Need at least one token");
-        Proposal memory proposal = Proposal(amount, msg.sender, block.timestamp + 30 days, 0, 0, 1, 1);
+        Proposal memory proposal = Proposal(amount, msg.sender, block.timestamp + 30 days, 0);
         proposals.push(proposal);
 
         return proposals.length;

@@ -1,4 +1,4 @@
-const Contract = artifacts.require("Token");
+const Token = artifacts.require("Token");
 
 const {
   BN,
@@ -11,10 +11,10 @@ const {
 const { expect } = require("chai");
 
 contract("Token", (accounts) => {
-  let contract;
+  let token;
 
   beforeEach(async () => {
-    contract = await Token.new();
+    token = await Token.new();
   });
 
   describe("deployment", () => {

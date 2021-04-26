@@ -16,8 +16,4 @@ contract("Grants", (accounts) => {
   beforeEach(async () => {
     contract = await Contract.new();
   });
-
-  // describe("deployment", () => {
-
-  // });
 });
