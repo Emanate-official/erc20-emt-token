@@ -38,6 +38,7 @@ contract Grants is Ownable {
 
     function claim(uint256 index) public {
         require(msg.sender == proposals[index].owner, "Must be owner");
+        require(inFundingPeriod(index) == false, "In funding period");
         address owner = proposals[index].owner;
         address rewards = address(this);
         erc20.transferFrom(rewards, owner, proposals[index].balance);
