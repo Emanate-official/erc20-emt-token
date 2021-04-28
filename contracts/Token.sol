@@ -4,8 +4,10 @@ pragma solidity >=0.4.22 <0.9.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "./interfaces/IHolders.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Token is Ownable, ERC20 {
+contract Token is Ownable, ERC20, IHolders {
     using SafeMath for uint;
 
     address immutable private _existing_holders;
@@ -18,7 +20,7 @@ contract Token is Ownable, ERC20 {
 
     uint256 private _holderCount;
 
-    function holderCount() public view returns (uint256) {
+    function holderCount() external view returns (uint256) {
         return _holderCount;
     }
 
