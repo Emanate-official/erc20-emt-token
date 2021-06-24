@@ -20,10 +20,10 @@ contract("Token", (accounts) => {
   describe("deployment", () => {
     it("should get standard ERC20 properties", async () => {
       const symbol = await token.symbol();
-      expect(symbol).to.be.equal("MODA");
+      expect(symbol).to.be.equal("EMT");
 
       const name = await token.name();
-      expect(name).to.be.equal("moda");
+      expect(name).to.be.equal("");
 
       const decimals = new BN("18");
       const expected = new BN("10000000").mul(new BN("10").pow(decimals));
