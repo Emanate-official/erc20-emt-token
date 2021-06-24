@@ -6,25 +6,20 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./interfaces/ICountable.sol";
 
 contract Token is Ownable, ERC20, ICountable {
-    using SafeMath for uint;
 
     uint256 private _holderCount;
 
-    function count() external view returns (uint256) {
+    function count() external view override returns (uint256) {
         return _holderCount;
     }
 
-    constructor() ERC20("EMT", "Emante") {
+    constructor() ERC20("Emante", "EMT") {
 
     }
 
-    // function mint(address who, uint256 amount) external onlyOwner() {
-    //     if (balanceOf(who) == 0 && amount > 0) {
-    //         _holderCount += 1;
-    //     }
-
-    //     _mint(who, amount);
-    // }
+    function mint(uint256 amount) external onlyOwner() {
+        mintWithCount(address(this), amount);
+    }
 
     function mintWithCount(address who, uint256 amount) private {
         if (balanceOf(who) == 0 && amount > 0) {
@@ -39,7 +34,7 @@ contract Token is Ownable, ERC20, ICountable {
             _holderCount += 1;
         }
 
-        if (balanceOf(msg.sender).sub(amount) == 0 && amount > 0) {
+        if (balanceOf(msg.sender) - amount == 0 && amount > 0) {
             _holderCount += 1;
         }
 

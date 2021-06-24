@@ -1,7 +1,5 @@
 const Token = artifacts.require("Token");
-// const Grants = artifacts.require("Grants");
 
-module.exports = function (deployer) {
+module.exports = (deployer) => {
   deployer.deploy(Token);
-  // deployer.deploy(Grants(Token.address));
 };

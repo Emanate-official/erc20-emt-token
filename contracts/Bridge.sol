@@ -9,7 +9,7 @@ contract Bridge is IERC20 {
     mapping (address => uint256) private balances;
     mapping (address => mapping (address => uint256)) private allowances;
 
-    uint256 public totalSupply;
+    uint256 public override totalSupply;
 
     string public name;
     string public symbol;
@@ -45,7 +45,7 @@ contract Bridge is IERC20 {
         return true;
     }
 
-    function allowance(address owner, address spender) public view virtual returns (uint256) {
+    function allowance(address owner, address spender) public view virtual override returns (uint256) {
         return allowances[owner][spender];
     }
    
@@ -56,7 +56,7 @@ contract Bridge is IERC20 {
     
     function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, msg.sender, allowances[sender][msg.sender].sub(amount, "ERC20: transfer amount exceeds allowance"));
+        _approve(sender, msg.sender, allowances[sender][msg.sender] - amount);
         return true;
     }
 
@@ -64,22 +64,22 @@ contract Bridge is IERC20 {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
-        balances[sender] = balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
-        balances[recipient] = balances[recipient].add(amount);
+        balances[sender] -= amount;
+        balances[recipient] += amount;
         emit Transfer(sender, recipient, amount);
     }
 
-    function mint(address account, uint256 amount) public override onlyBridge() {
+    function mint(address account, uint256 amount) public onlyBridge() {
         require(account != address(0), "ERC20: mint to the zero address");
 
-        totalSupply = totalSupply.add(amount);
-        balances[account] = balances[account].add(amount);
+        totalSupply += amount;
+        balances[account] += amount;
         emit Transfer(address(0), account, amount);
     }
 
-    function burn(uint256 amount) public override {
-        balances[msg.sender] = balances[msg.sender].sub(amount, "ERC20: burn amount exceeds balance");
-        totalSupply = totalSupply.sub(amount);
+    function burn(uint256 amount) public {
+        balances[msg.sender] -= amount;
+        totalSupply -= amount;
         emit Transfer(msg.sender, address(0), amount);
     }
 
