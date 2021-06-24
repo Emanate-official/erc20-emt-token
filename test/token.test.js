@@ -33,16 +33,20 @@ contract("Token", (accounts) => {
       expect(totalSupply).to.be.bignumber.equal(expected);
     });
 
-    it("should mint with count", async () => {
-      let actual = await token.count();
-      let expected = new BN("0");
+    it.only("should mint with count", async () => {
+      let totalSupply = await token.totalSupply();
+      let count = await token.count();
 
-      expect(actual).to.be.bignumber.equal(expected);
+      expect(totalSupply).to.be.bignumber.equal(new BN("0"));
+      expect(count).to.be.bignumber.equal(new BN("0"));
 
       await token.mint(42);
 
-      actual = await token.count();
-      expected = new BN("10000000000000000000000000");
+      totalSupply = await token.totalSupply();
+      count = await token.count();
+
+      expect(count).to.be.bignumber.equal(new BN("1"));
+      expect(totalSupply).to.be.bignumber.equal(new BN("42"));
     });
 
     it.skip("should have holder count as 1", async () => {
@@ -52,7 +56,8 @@ contract("Token", (accounts) => {
       expect(actual).to.be.bignumber.equal(expected);
     });
 
-    it.skip("should have holder count as 2 after transfer", async () => {
+    it("should have holder count as 2 after transfer", async () => {
+      await token.transfer(100, accounts[1]);
       const actual = await token.count();
       const expected = new BN("10000000000000000000000000");
 
