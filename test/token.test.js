@@ -38,5 +38,12 @@ contract("Token", (accounts) => {
 
       expect(actual).to.be.bignumber.equal(expected);
     });
+
+    it("should have holder count as 2 after transfer", async () => {
+      const actual = await token.holderCount();
+      const expected = new BN("1");
+
+      expect(actual).to.be.bignumber.equal(expected);
+    });
   });
 });

@@ -1,5 +1,10 @@
-contract DappToken is IERC20 {
-    using SafeMath for uint256;
+
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.6;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract Bridge is IERC20 {
 
     mapping (address => uint256) private balances;
     mapping (address => mapping (address => uint256)) private allowances;

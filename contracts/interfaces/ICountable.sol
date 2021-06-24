@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity ^0.6.12;
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.6;
 
 interface ICountable {
     function count() external view returns (uint256);
