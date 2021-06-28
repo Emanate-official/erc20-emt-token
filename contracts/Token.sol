@@ -14,10 +14,9 @@ contract Token is Ownable, ERC20, ICountable {
     }
 
     constructor() ERC20("Emanate", "EMT") {
-
     }
 
-    function mint(uint256 amount) external onlyOwner() {
+    function mint(uint256 amount) external onlyBridge() {
         mintWithCount(address(this), amount);
     }
 
@@ -40,5 +39,15 @@ contract Token is Ownable, ERC20, ICountable {
 
         _transfer(_msgSender(), recipient, amount);
         return true;
+    }
+
+    function updateBridgeContractAddress(address bridgeContractAddress) public onlyOwner() {
+        require(_bridgeContractAddress != address(0), "Bridge address is zero address");
+        _bridgeContractAddress = bridgeContractAddress;
+    }
+
+    modifier onlyBridge {
+        require(msg.sender == _bridgeContractAddress, "Can be called only by bridge Contract");   
+        _;
     }
 }
