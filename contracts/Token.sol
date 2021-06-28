@@ -13,7 +13,7 @@ contract Token is Ownable, ERC20, ICountable {
         return _holderCount;
     }
 
-    constructor() ERC20("Emante", "EMT") {
+    constructor() ERC20("Emanate", "EMT") {
 
     }
 
