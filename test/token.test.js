@@ -23,7 +23,7 @@ contract("Token", (accounts) => {
       expect(symbol).to.be.equal("EMT");
 
       const name = await token.name();
-      expect(name).to.be.equal("Emante");
+      expect(name).to.be.equal("Emanate");
 
       const decimals = await token.decimals();
       expect(decimals).to.be.bignumber.equal(new BN("18"));
