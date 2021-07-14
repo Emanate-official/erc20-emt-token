@@ -33,7 +33,7 @@ contract("Token", (accounts) => {
       expect(totalSupply).to.be.bignumber.equal(expected);
     });
 
-    it.only("should mint with count", async () => {
+    it("should mint with count", async () => {
       let totalSupply = await token.totalSupply();
       let count = await token.count();
 
@@ -49,7 +49,7 @@ contract("Token", (accounts) => {
       expect(totalSupply).to.be.bignumber.equal(new BN("42"));
     });
 
-    it.skip("should have holder count as 1", async () => {
+    it("should have holder count as 1", async () => {
       const actual = await token.count();
       const expected = new BN("10000000000000000000000000");
 
