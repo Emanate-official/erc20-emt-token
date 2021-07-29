@@ -6,14 +6,18 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 abstract contract BaseBridge is Ownable {
     address internal _token;
     address internal _authorised;
-    uint256 public amountHeld;
+    mapping (uint256 => uint256) internal _balances;
 
-    function bridgeToken() public view returns(address) {
+    function balanceOf(uint256 chainId) external view returns (uint256) {
+        return _balances[chainId];
+    }
+
+    function bridgeToken() external view returns(address) {
         return address(_token);
     }
 
     function updateAuthorised(address who) public onlyOwner() {
-        require(who != address(0), "Invalid address");
+        require(who != address(0), "Invalid account");
         _authorised = who;        
     }
 
