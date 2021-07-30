@@ -12,6 +12,10 @@ contract Token is Ownable, ERC20, ERC20Burnable, ICountable, IMintable {
     uint256 private _holderCount;
     address private _bridgeContractAddress;
 
+    function count() external view override returns (uint256) {
+        return _holderCount;
+    }
+
     constructor() ERC20("Emanate", "EMT") {
         _bridgeContractAddress = msg.sender;
     }

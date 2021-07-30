@@ -14,5 +14,6 @@ The dependencies require Node -v 12.18.3
 
 `truffle run verify Token --network kovan`
 
-## Notes
-https://github.com/investingwad/dapperc20 for bridge
+## Bridge
+
+The interface for the bridge should be based off https://github.com/investingwad/dapperc20 
