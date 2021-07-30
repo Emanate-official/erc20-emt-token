@@ -2,12 +2,12 @@
 pragma solidity =0.8.6;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "./interfaces/ICountable.sol";
-import "./interfaces/IBurnable.sol";
+import "./interfaces/IMintable.sol";
 
-contract Token is Ownable, ERC20, ICountable, IBurnable {
+contract Token is Ownable, ERC20, ERC20Burnable, ICountable, IMintable {
 
     uint256 private _holderCount;
     address private _bridgeContractAddress;
@@ -19,20 +19,17 @@ contract Token is Ownable, ERC20, ICountable, IBurnable {
     constructor() ERC20("Emanate", "EMT") {
     }
 
-    function mint(uint256 amount) external onlyBridge() {
-        mintWithCount(address(this), amount);
+    function mint(address account, uint256 amount) external override onlyBridge() {
+        mintWithCount(account, amount);
     }
 
-    function burnFrom(address account, uint256 amount) external onlyBridge() {
-        _burn(account, amount);
-    }
-
-    function mintWithCount(address who, uint256 amount) private {
-        if (balanceOf(who) == 0 && amount > 0) {
+    function mintWithCount(address account, uint256 amount) private {
+        require(account != address(0) && amount > 0, "Invalid arguments");
+        if (balanceOf(account) == 0 && amount > 0) {
             _holderCount++;
         }
 
-        _mint(who, amount);
+        _mint(account, amount);
     }
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {

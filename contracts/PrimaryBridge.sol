@@ -20,7 +20,7 @@ contract PrimaryBridge is BaseBridge {
 
     function deposit(uint256 amount, uint256 chainId) external returns (bool) {
         require(amount > 0, "Amount must be greater than 0");
-        
+
         IERC20(_token).safeTransferFrom(msg.sender, self, amount);
         amountHeld += amount;
         _balances[chainId] += amount;
@@ -28,9 +28,16 @@ contract PrimaryBridge is BaseBridge {
         return true;
     }
 
-    function release(uint256 amount, address to, uint256 chainId) external onlyAuthorised() returns (bool) {
+    function release(
+        uint256 amount,
+        address to,
+        uint256 chainId
+    ) external onlyAuthorised returns (bool) {
         require(amount > 0, "Amount must be greater than 0");
-        require(_balances[chainId] >= amount && amount <= amountHeld, "Amount must be greater than or equal to chain balance");
+        require(
+            _balances[chainId] >= amount && amount <= amountHeld,
+            "Amount must be greater than or equal to chain balance"
+        );
 
         IERC20(_token).safeTransfer(to, amount);
         amountHeld -= amount;
@@ -39,6 +46,16 @@ contract PrimaryBridge is BaseBridge {
         return true;
     }
 
-    event DepositReceived(uint256 amount, uint256 chainId, uint256 timestamp, address indexed from);
-    event Released(uint256 amount, uint256 chainId, uint256 timestamp, address indexed to);
+    event DepositReceived(
+        uint256 amount,
+        uint256 chainId,
+        uint256 timestamp,
+        address indexed from
+    );
+    event Released(
+        uint256 amount,
+        uint256 chainId,
+        uint256 timestamp,
+        address indexed to
+    );
 }
