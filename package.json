@@ -1,4 +1,17 @@
 {
+  "name": "token-bridge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Emanate-official/mn8-token",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "clean": "npx hardhat clean",
+    "compile": "npx hardhat compile",
+    "deploy": "hardhat run scripts/deployAllKovan.ts",
+    "node": "hardhat node",
+    "test": "hardhat test",
+    "typecheck": "yarn compile && tsc --noEmit"
+  },
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
     "@openzeppelin/test-helpers": "^0.5.10",
