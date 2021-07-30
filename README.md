@@ -1,4 +1,4 @@
-# mn8-token
+# emt-token
 Emanate Token Contract
 
 ## Node 12.18.3
