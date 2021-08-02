@@ -15,6 +15,9 @@ contract("Token", (accounts) => {
 
   beforeEach(async () => {
     token = await Token.new();
+
+    expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
+    expect(await token.balanceOf(accounts[2])).to.be.bignumber.equal(new BN("0"));
   });
 
   describe("deployment", () => {
@@ -40,28 +43,33 @@ contract("Token", (accounts) => {
       expect(totalSupply).to.be.bignumber.equal(new BN("0"));
       expect(count).to.be.bignumber.equal(new BN("0"));
 
-      await token.mint(42);
+      await token.mint(accounts[1], 42);
 
       totalSupply = await token.totalSupply();
       count = await token.count();
+      const balance = await token.balanceOf(accounts[1]);
 
       expect(count).to.be.bignumber.equal(new BN("1"));
       expect(totalSupply).to.be.bignumber.equal(new BN("42"));
+      expect(balance).to.be.bignumber.equal(new BN("42"));
     });
 
-    it("should have holder count as 1", async () => {
+    it("should have holder count as 0 after deploy", async () => {
       const actual = await token.count();
-      const expected = new BN("10000000000000000000000000");
+      const expected = new BN("0");
 
       expect(actual).to.be.bignumber.equal(expected);
     });
 
-    it("should have holder count as 2 after transfer", async () => {
-      await token.transfer(100, accounts[1]);
-      const actual = await token.count();
-      const expected = new BN("10000000000000000000000000");
+    it.only("should have holder count as 2 after transfers", async () => {
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(accounts[2])).to.be.bignumber.equal(new BN("0"));
 
-      expect(actual).to.be.bignumber.equal(expected);
+      await token.mint(accounts[1], 100);
+      expect(await token.count()).to.be.bignumber.equal(new BN("1"));
+
+      await token.transfer(accounts[2], 50, { from: accounts[1] });
+      expect(await token.count()).to.be.bignumber.equal(new BN("2"));
     });
   });
 });

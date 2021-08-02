@@ -26,24 +26,30 @@ contract Token is Ownable, ERC20, ERC20Burnable, ICountable, IMintable {
 
     function mintWithCount(address account, uint256 amount) private {
         require(account != address(0) && amount > 0, "Invalid arguments");
-        if (balanceOf(account) == 0 && amount > 0) {
+        if (balanceOf(account) == 0) {
             _holderCount++;
         }
 
         _mint(account, amount);
     }
 
-    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
-        if (balanceOf(recipient) == 0 && amount > 0) {
-            _holderCount++;
-        }
-
-        if (balanceOf(msg.sender) - amount == 0 && amount > 0) {
-            _holderCount++;
-        }
-
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
+        require(recipient != address(0) && amount > 0, "Invalid arguments");
         _transfer(_msgSender(), recipient, amount);
+
+//&& balanceOf(msg.sender) - amount > 0
+        if (balanceOf(recipient) == 0 ) {
+            _holderCount++;
+        }
+
         return true;
+    }
+
+    function burnFrom(address account, uint256 amount) public override onlyBridge() {
+        if (balanceOf(account) == 0 && amount > 0 || balanceOf(account) - amount == 0 && amount > 0) {
+            _holderCount--;
+        }
+        burnFrom(account, amount);
     }
 
     function updateBridgeContractAddress(address bridgeContractAddress) public onlyOwner() {
