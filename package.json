@@ -1,8 +1,8 @@
 {
-  "name": "token-bridge",
+  "name": "emt-token",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "https://github.com/Emanate-official/mn8-token",
+  "repository": "https://github.com/Emanate-official/emt-token",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "clean": "npx hardhat clean",
