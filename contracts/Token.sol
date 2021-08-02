@@ -3,11 +3,11 @@ pragma solidity =0.8.6;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+
 import "./interfaces/ICountable.sol";
 import "./interfaces/IMintable.sol";
 
-contract Token is Ownable, ERC20, ERC20Burnable, ICountable, IMintable {
+contract Token is Ownable, ERC20, ICountable, IMintable {
 
     uint256 private _holderCount;
     address private _bridgeContractAddress;
@@ -35,22 +35,21 @@ contract Token is Ownable, ERC20, ERC20Burnable, ICountable, IMintable {
 
     function transfer(address recipient, uint256 amount) public override returns (bool) {
         require(recipient != address(0) && amount > 0, "Invalid arguments");
+        
+        if (balanceOf(recipient) == 0 && balanceOf(msg.sender) - amount > 0) {
+            _holderCount++;
+        }
+
         _transfer(_msgSender(), recipient, amount);
-
-//&& balanceOf(msg.sender) - amount > 0
-        // if (balanceOf(recipient) == 0 ) {
-        //     _holderCount++;
-        // }
-
-_holderCount++;
         return true;
     }
 
-    function burnFrom(address account, uint256 amount) public override onlyBridge() {
-        if (balanceOf(account) == 0 && amount > 0 || balanceOf(account) - amount == 0 && amount > 0) {
+    function burnFrom(address account, uint256 amount) public onlyBridge() {
+        require(account != address(0) && amount > 0, "Invalid arguments");
+        _burn(account, amount);
+        if (balanceOf(account) == 0) {
             _holderCount--;
         }
-        burnFrom(account, amount);
     }
 
     function updateBridgeContractAddress(address bridgeContractAddress) public onlyOwner() {
