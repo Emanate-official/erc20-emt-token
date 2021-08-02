@@ -5,12 +5,7 @@
   "repository": "https://github.com/Emanate-official/emt-token",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "clean": "npx hardhat clean",
-    "compile": "npx hardhat compile",
-    "deploy": "hardhat run scripts/deployAllKovan.ts",
-    "node": "hardhat node",
-    "test": "hardhat test",
-    "typecheck": "yarn compile && tsc --noEmit"
+    "compile": "truffle compile"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
