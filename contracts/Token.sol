@@ -38,10 +38,11 @@ contract Token is Ownable, ERC20, ERC20Burnable, ICountable, IMintable {
         _transfer(_msgSender(), recipient, amount);
 
 //&& balanceOf(msg.sender) - amount > 0
-        if (balanceOf(recipient) == 0 ) {
-            _holderCount++;
-        }
+        // if (balanceOf(recipient) == 0 ) {
+        //     _holderCount++;
+        // }
 
+_holderCount++;
         return true;
     }
 
