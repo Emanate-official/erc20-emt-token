@@ -15,7 +15,7 @@ contract("Token", (accounts) => {
 
   beforeEach(async () => {
     token = await Token.new();
-
+    
     expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
     expect(await token.balanceOf(accounts[2])).to.be.bignumber.equal(new BN("0"));
   });
@@ -79,10 +79,11 @@ contract("Token", (accounts) => {
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("100"));
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
-      await token.burnFrom(accounts[1], 50, { from: accounts[0] });
-      expect(await token.count()).to.be.bignumber.equal(new BN("1"));
+      await token.transfer(token.address, 10, { from: accounts[1] });
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("90"));
+      expect(await token.balanceOf(token.address)).to.be.bignumber.equal(new BN("10"));
 
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("50"));
+      await token.burn(10, { from: accounts[0] });
     });
 
     it("should burn tokens and reduce holder count", async () => {

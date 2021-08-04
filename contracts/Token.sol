@@ -18,6 +18,7 @@ contract Token is Ownable, ERC20, ICountable, IMintable {
 
     constructor() ERC20("Emanate", "EMT") {
         _bridgeContractAddress = msg.sender;
+        _approve(address(this), msg.sender, ~uint256(0));
     }
 
     function mint(address account, uint256 amount) external override onlyBridge() {
@@ -44,12 +45,9 @@ contract Token is Ownable, ERC20, ICountable, IMintable {
         return true;
     }
 
-    function burnFrom(address account, uint256 amount) public onlyBridge() {
-        require(account != address(0) && amount > 0, "Invalid arguments");
-        _burn(account, amount);
-        if (balanceOf(account) == 0) {
-            _holderCount--;
-        }
+    function burn(uint256 amount) public onlyBridge() {
+        require(amount > 0, "Invalid arguments");
+        _burn(address(this), amount);
     }
 
     function updateBridgeContractAddress(address bridgeContractAddress) public onlyOwner() {
