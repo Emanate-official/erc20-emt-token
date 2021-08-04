@@ -12,6 +12,8 @@ contract Token is Ownable, ERC20, ICountable, IMintable {
     uint256 private _holderCount;
     address private _bridgeContractAddress;
 
+    uint256 private _max_supply = 208_000_000 * 10**18;
+
     function count() external view override returns (uint256) {
         return _holderCount;
     }
@@ -22,6 +24,7 @@ contract Token is Ownable, ERC20, ICountable, IMintable {
     }
 
     function mint(address account, uint256 amount) external override onlyBridge() {
+        require(_max_supply > totalSupply() + amount, "Cap has been reached");
         mintWithCount(account, amount);
     }
 

@@ -31,9 +31,8 @@ contract("Token", (accounts) => {
       const decimals = await token.decimals();
       expect(decimals).to.be.bignumber.equal(new BN("18"));
       
-      const expected = new BN("0");
       const totalSupply = await token.totalSupply();
-      expect(totalSupply).to.be.bignumber.equal(expected);
+      expect(totalSupply).to.be.bignumber.equal(new BN("0"));
     });
 
     it("should mint with count", async () => {
@@ -45,12 +44,11 @@ contract("Token", (accounts) => {
 
       await token.mint(accounts[1], 42);
 
-      totalSupply = await token.totalSupply();
       count = await token.count();
       const balance = await token.balanceOf(accounts[1]);
 
       expect(count).to.be.bignumber.equal(new BN("1"));
-      expect(totalSupply).to.be.bignumber.equal(new BN("42"));
+      expect(await token.totalSupply()).to.be.bignumber.equal(new BN("42"));
       expect(balance).to.be.bignumber.equal(new BN("42"));
     });
 
@@ -84,18 +82,26 @@ contract("Token", (accounts) => {
       expect(await token.balanceOf(token.address)).to.be.bignumber.equal(new BN("10"));
 
       await token.burn(10, { from: accounts[0] });
+      expect(await token.totalSupply()).to.be.bignumber.equal(new BN("90"));
     });
 
     it("should burn tokens and reduce holder count", async () => {
+      expect(await token.count()).to.be.bignumber.equal(new BN("0"));
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
 
       await token.mint(accounts[1], 100);
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("100"));
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
-      await token.burnFrom(accounts[1], 100, { from: accounts[0] });
-      expect(await token.count()).to.be.bignumber.equal(new BN("0"));
+      await token.transfer(token.address, 100, { from: accounts[1] });
+      expect(await token.count()).to.be.bignumber.equal(new BN("1"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(token.address)).to.be.bignumber.equal(new BN("100"));
 
+      await token.burn(100, { from: accounts[0] });
+      expect(await token.count()).to.be.bignumber.equal(new BN("1"));
+
+      expect(await token.balanceOf(token.address)).to.be.bignumber.equal(new BN("0"));
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
     });
   });
