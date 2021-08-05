@@ -12,6 +12,7 @@ const { expect } = require("chai");
 
 contract("Token", (accounts) => {
   let token;
+  const owner = accounts[0];
 
   beforeEach(async () => {
     token = await Token.new();
@@ -77,11 +78,11 @@ contract("Token", (accounts) => {
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("100"));
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
-      await token.transfer(token.address, 10, { from: accounts[1] });
+      await token.transfer(owner, 10, { from: accounts[1] });
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("90"));
-      expect(await token.balanceOf(token.address)).to.be.bignumber.equal(new BN("10"));
+      expect(await token.balanceOf(owner)).to.be.bignumber.equal(new BN("10"));
 
-      await token.burn(10, { from: accounts[0] });
+      await token.burn(10, { from: owner });
       expect(await token.totalSupply()).to.be.bignumber.equal(new BN("90"));
     });
 
@@ -93,15 +94,15 @@ contract("Token", (accounts) => {
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("100"));
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
-      await token.transfer(token.address, 100, { from: accounts[1] });
+      await token.transfer(owner, 100, { from: accounts[1] });
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
-      expect(await token.balanceOf(token.address)).to.be.bignumber.equal(new BN("100"));
+      expect(await token.balanceOf(owner)).to.be.bignumber.equal(new BN("100"));
 
-      await token.burn(100, { from: accounts[0] });
+      await token.burn(100, { from: owner });
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
-      expect(await token.balanceOf(token.address)).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(owner)).to.be.bignumber.equal(new BN("0"));
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
     });
   });
