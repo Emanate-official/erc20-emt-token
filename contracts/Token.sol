@@ -2,25 +2,27 @@
 pragma solidity =0.8.6;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./interfaces/ICountable.sol";
 import "./interfaces/IMintable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-contract Token is Ownable, ERC20, ICountable, IMintable {
+contract Token is ERC20Upgradeable, ICountable, IMintable {
 
     uint256 private _holderCount;
     address private _bridgeContractAddress;
 
     uint256 private _max_supply = 208_000_000 * 10**18;
+    address private _owner;
 
     function count() external view override returns (uint256) {
         return _holderCount;
     }
 
-    constructor() ERC20("Emanate", "EMT") {
-        _bridgeContractAddress = msg.sender;
-    }
+    function initialize(string memory name, string memory symbol) initializer public {
+        _owner == msg.sender;
+        __ERC20_init(name, symbol);
+     }
 
     function mint(address account, uint256 amount) external override onlyBridge() {
         require(_max_supply > totalSupply() + amount, "Cap has been reached");
@@ -59,6 +61,11 @@ contract Token is Ownable, ERC20, ICountable, IMintable {
 
     modifier onlyBridge {
         require(msg.sender == _bridgeContractAddress, "Can be called only by bridge contract");   
+        _;
+    }
+
+    modifier onlyOwner {
+        require(msg.sender == _owner, "Can be called only by owner");
         _;
     }
 }
