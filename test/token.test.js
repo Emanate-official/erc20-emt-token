@@ -1,3 +1,6 @@
+// https://docs.openzeppelin.com/upgrades-plugins/1.x/truffle-upgrades
+
+const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 const Token = artifacts.require("Token");
 
 const {
@@ -13,12 +16,19 @@ const { expect } = require("chai");
 contract("Token", (accounts) => {
   let token;
   const owner = accounts[0];
+  const bridge_contract = accounts[3];
 
   beforeEach(async () => {
-    token = await Token.new();
-    
-    expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
-    expect(await token.balanceOf(accounts[2])).to.be.bignumber.equal(new BN("0"));
+    token = await deployProxy(Token, ["Emanate", "EMT"]);
+
+    expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+      new BN("0")
+    );
+    expect(await token.balanceOf(accounts[2])).to.be.bignumber.equal(
+      new BN("0")
+    );
+
+    await token.updateBridgeContractAddress(bridge_contract, { from: owner });
   });
 
   describe("deployment", () => {
@@ -31,7 +41,7 @@ contract("Token", (accounts) => {
 
       const decimals = await token.decimals();
       expect(decimals).to.be.bignumber.equal(new BN("18"));
-      
+
       const totalSupply = await token.totalSupply();
       expect(totalSupply).to.be.bignumber.equal(new BN("0"));
     });
@@ -43,7 +53,7 @@ contract("Token", (accounts) => {
       expect(totalSupply).to.be.bignumber.equal(new BN("0"));
       expect(count).to.be.bignumber.equal(new BN("0"));
 
-      await token.mint(accounts[1], 42);
+      await token.mint(accounts[1], 42, { from: bridge_contract });
 
       count = await token.count();
       const balance = await token.balanceOf(accounts[1]);
@@ -61,8 +71,12 @@ contract("Token", (accounts) => {
     });
 
     it("should have holder count as 2 after transfers", async () => {
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
-      expect(await token.balanceOf(accounts[2])).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("0")
+      );
+      expect(await token.balanceOf(accounts[2])).to.be.bignumber.equal(
+        new BN("0")
+      );
 
       await token.mint(accounts[1], 100);
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
@@ -72,38 +86,52 @@ contract("Token", (accounts) => {
     });
 
     it("should burn tokens and not reduce holder count", async () => {
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("0")
+      );
 
-      await token.mint(accounts[1], 100);
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("100"));
+      await token.mint(accounts[1], 100, { from: bridge_contract });
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("100")
+      );
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
       await token.transfer(owner, 10, { from: accounts[1] });
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("90"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("90")
+      );
       expect(await token.balanceOf(owner)).to.be.bignumber.equal(new BN("10"));
 
-      await token.burn(10, { from: owner });
+      await token.burn(10, { from: bridge_contract });
       expect(await token.totalSupply()).to.be.bignumber.equal(new BN("90"));
     });
 
     it("should burn tokens and reduce holder count", async () => {
       expect(await token.count()).to.be.bignumber.equal(new BN("0"));
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("0")
+      );
 
       await token.mint(accounts[1], 100);
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("100"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("100")
+      );
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
       await token.transfer(owner, 100, { from: accounts[1] });
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("0")
+      );
       expect(await token.balanceOf(owner)).to.be.bignumber.equal(new BN("100"));
 
-      await token.burn(100, { from: owner });
+      await token.burn(100, { from: bridge_contract });
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
       expect(await token.balanceOf(owner)).to.be.bignumber.equal(new BN("0"));
-      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(new BN("0"));
+      expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
+        new BN("0")
+      );
     });
   });
 });

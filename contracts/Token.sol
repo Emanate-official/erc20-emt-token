@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.6;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-
 import "./interfaces/ICountable.sol";
 import "./interfaces/IMintable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract Token is ERC20Upgradeable, ICountable, IMintable {
+contract Token is ERC20Upgradeable, OwnableUpgradeable, ICountable, IMintable {
 
     uint256 private _holderCount;
     address private _bridgeContractAddress;
 
-    uint256 private _max_supply = 208_000_000 * 10**18;
+    uint256 private _max_supply;
     address private _owner;
 
     function count() external view override returns (uint256) {
@@ -20,8 +19,10 @@ contract Token is ERC20Upgradeable, ICountable, IMintable {
     }
 
     function initialize(string memory name, string memory symbol) initializer public {
+        _max_supply = 208_000_000 * 10**18;
         _owner == msg.sender;
         __ERC20_init(name, symbol);
+        __Ownable_init();
      }
 
     function mint(address account, uint256 amount) external override onlyBridge() {
@@ -55,17 +56,12 @@ contract Token is ERC20Upgradeable, ICountable, IMintable {
     }
 
     function updateBridgeContractAddress(address bridgeContractAddress) public onlyOwner() {
-        require(_bridgeContractAddress != address(0), "Bridge address is zero address");
+        require(bridgeContractAddress != address(0), "Bridge address is invalid");
         _bridgeContractAddress = bridgeContractAddress;
     }
 
     modifier onlyBridge {
         require(msg.sender == _bridgeContractAddress, "Can be called only by bridge contract");   
-        _;
-    }
-
-    modifier onlyOwner {
-        require(msg.sender == _owner, "Can be called only by owner");
         _;
     }
 }
