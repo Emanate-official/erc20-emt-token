@@ -69,7 +69,9 @@ contract("Token", (accounts) => {
 
       expect(actual).to.be.bignumber.equal(expected);
     });
+  });
 
+  describe.only("transfering and burning", () => {
     it("should have holder count as 2 after transfers", async () => {
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
         new BN("0")
@@ -78,7 +80,7 @@ contract("Token", (accounts) => {
         new BN("0")
       );
 
-      await token.mint(accounts[1], 100);
+      await token.mint(accounts[1], 100, { from: bridge_contract });
       expect(await token.count()).to.be.bignumber.equal(new BN("1"));
 
       await token.transfer(accounts[2], 50, { from: accounts[1] });

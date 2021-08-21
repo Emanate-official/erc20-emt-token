@@ -1,5 +1,12 @@
 const Token = artifacts.require("Token");
+const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 
-module.exports = (deployer) => {
-  deployer.deploy(Token);
+// module.exports = async (deployer) => {
+//   await deployer.deploy(Token);
+// };
+
+module.exports = async (deployer) => {
+  await deployProxy(Token, ["Emanate", "EMT"], { deployer });
+
+  //await deployProxy(Token, ["Emanate", "EMT"]);
 };

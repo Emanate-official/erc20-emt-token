@@ -25,7 +25,7 @@ module.exports = {
           providerOrUrl: process.env.NODE
         })
       },
-      network_id: "42",
+      network_id: 42,
       gas: 4500000,
       confirmations: 2,
       timeoutBlocks: 200,
