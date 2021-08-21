@@ -71,7 +71,7 @@ contract("Token", (accounts) => {
     });
   });
 
-  only("transfering and burning", () => {
+  describe("transfering and burning", () => {
     it("should have holder count as 2 after transfers", async () => {
       expect(await token.balanceOf(accounts[1])).to.be.bignumber.equal(
         new BN("0")
