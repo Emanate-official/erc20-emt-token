@@ -50,7 +50,7 @@ contract Token is ERC20Upgradeable, OwnableUpgradeable, ICountable, IMintable {
         return true;
     }
 
-    function burn(uint256 amount) public onlyBridge() {
+    function burn(uint256 amount) public {
         require(amount > 0, "Invalid arguments");
         _burn(msg.sender, amount);
     }
