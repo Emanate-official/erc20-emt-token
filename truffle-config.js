@@ -25,7 +25,7 @@ module.exports = {
           providerOrUrl: process.env.NODE
         })
       },
-      network_id: "42",
+      network_id: 42,
       gas: 4500000,
       confirmations: 2,
       timeoutBlocks: 200,
@@ -50,6 +50,6 @@ module.exports = {
     },
   },
   api_keys: {
-    etherscan: process.env.ETH_SCAN_API_KEY
+    etherscan: process.env.ETH_SCAN_API_KEY, 
   }
 };
