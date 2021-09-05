@@ -5,8 +5,10 @@ import "./interfaces/ICountable.sol";
 import "./interfaces/IMintable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract Token is ERC20Upgradeable, OwnableUpgradeable, ICountable, IMintable {
+contract Token is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUpgradeable, ICountable, IMintable {
 
     uint256 private _holderCount;
     address private _bridgeContractAddress;
@@ -18,17 +20,17 @@ contract Token is ERC20Upgradeable, OwnableUpgradeable, ICountable, IMintable {
         return _holderCount;
     }
 
-    function initialize(string memory name, string memory symbol) initializer public {
+    function initialize(string memory _name, string memory _symbol) initializer public {
         _max_supply = 208_000_000 * 10**18;
-        _owner == msg.sender;
-        __ERC20_init(name, symbol);
+        __ERC20_init(_name, _symbol);
+        __UUPSUpgradeable_init();
         __Ownable_init();
      }
 
     function mint(address account, uint256 amount) external override onlyBridge() {
         require(_max_supply > totalSupply() + amount, "Cap has been reached");
         mintWithCount(account, amount);
-    }
+    }           
 
     function mintWithCount(address account, uint256 amount) private {
         require(account != address(0) && amount > 0, "Invalid arguments");
@@ -46,8 +48,7 @@ contract Token is ERC20Upgradeable, OwnableUpgradeable, ICountable, IMintable {
             _holderCount++;
         }
 
-        _transfer(_msgSender(), recipient, amount);
-        return true;
+        transfer(recipient, amount);
     }
 
     function burn(uint256 amount) public {
@@ -59,6 +60,9 @@ contract Token is ERC20Upgradeable, OwnableUpgradeable, ICountable, IMintable {
         require(bridgeContractAddress != address(0), "Bridge address is invalid");
         _bridgeContractAddress = bridgeContractAddress;
     }
+
+    /** @dev Protected UUPS upgrade authorization fuction */
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     modifier onlyBridge {
         require(msg.sender == _bridgeContractAddress, "Can be called only by bridge contract");   

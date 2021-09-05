@@ -16,6 +16,21 @@ module.exports = {
   ],
 
   networks: {
+    rinkeby: {
+      provider: () => {
+        return new HDWalletProvider({
+          mnemonic: {
+            phrase: process.env.MNEMONIC
+          },
+          providerOrUrl: process.env.NODE
+        })
+      },
+      network_id: 4,
+      gas: 4500000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+    },
     kovan: {
       provider: () => {
         return new HDWalletProvider({
