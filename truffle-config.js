@@ -16,6 +16,20 @@ module.exports = {
   ],
 
   networks: {
+    mainnet: {
+      provider: () => {
+        return new HDWalletProvider({
+          privateKeys: [ process.env.PRIVATE_KEY ],
+          providerOrUrl: process.env.NODE
+        })
+      },
+      network_id: 1,
+      //gas: 20000000,
+      gasPrice: 70000000000,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: false,
+    },
     rinkeby: {
       provider: () => {
         return new HDWalletProvider({

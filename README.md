@@ -1,19 +1,7 @@
 # emt-token
-Emanate Token Contract
+Offical Emanate Token Contract
 
-## Node 12.18.3
-The dependencies require Node -v 12.18.3
+Contract Address: `0xd79A2AD570F4f37f2B92A3aBcD65F5fd057b1d9A`
+Proxy: `0xcF9601B2117B6971c75d3c8C7B3E68a876047D9a`
 
-`nvm use 12.18.3`
-
-## Kovan
-
-`ganache-cli -m carpet dynamic deal utility emerge guide matter child rapid thunder option`
-
-## Verify 
-
-`truffle run verify Token --network kovan`
-
-## Bridge
-
-The interface for the bridge should be based off https://github.com/investingwad/dapperc20 
+The Owner is a Genosis safe 2/3 : `0x147a7851e3249D565Efb2eDd112065923cd97FF4`
