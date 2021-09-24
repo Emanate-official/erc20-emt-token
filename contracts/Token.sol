@@ -48,7 +48,8 @@ contract Token is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUpgra
             _holderCount++;
         }
 
-        transfer(recipient, amount);
+        _transfer(msg.sender, recipient, amount);
+        return true;
     }
 
     function burn(uint256 amount) public {
