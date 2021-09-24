@@ -6,3 +6,9 @@ Proxy: `0xcF9601B2117B6971c75d3c8C7B3E68a876047D9a`
 Bridge: `0xce9b04be4e87548d34b8a2180b85310424c84518`
 
 The Owner is a Genosis safe 2/3 : `0x147a7851e3249D565Efb2eDd112065923cd97FF4`
+
+## Deploy
+
+```bash
+truffle migrate --reset --network kovan
+```

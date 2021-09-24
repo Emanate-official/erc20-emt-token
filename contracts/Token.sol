@@ -16,7 +16,7 @@ contract Token is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUpgra
     uint256 private _max_supply;
     address private _owner;
 
-    function count() external view override returns (uint256) {
+    function holderCount() external view override returns (uint256) {
         return _holderCount;
     }
 
@@ -25,6 +25,7 @@ contract Token is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUpgra
         __ERC20_init(_name, _symbol);
         __UUPSUpgradeable_init();
         __Ownable_init();
+        _bridgeContractAddress = msg.sender;
      }
 
     function mint(address account, uint256 amount) external override onlyBridge() {
@@ -32,24 +33,26 @@ contract Token is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUpgra
         mintWithCount(account, amount);
     }           
 
-    function mintWithCount(address account, uint256 amount) private {
-        require(account != address(0) && amount > 0, "Invalid arguments");
-        if (balanceOf(account) == 0) {
-            _holderCount++;
-        }
-
-        _mint(account, amount);
+    function mintWithCount(address to, uint256 amount) private {
+        require(to != address(0) && amount > 0, "Invalid arguments");
+        _updateCountOnTransfer(address(0), to, amount);
+        _mint(to, amount);
     }
 
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
-        require(recipient != address(0) && amount > 0, "Invalid arguments");
-        
-        if (balanceOf(recipient) == 0 && balanceOf(msg.sender) - amount > 0) {
-            _holderCount++;
-        }
+    /**
+     * @dev ERC20 transfer function. Overridden to maintain holder count variable.
+     */
+    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+        _updateCountOnTransfer(_msgSender(), recipient, amount);
+        return super.transfer(recipient, amount);
+    }
 
-        _transfer(msg.sender, recipient, amount);
-        return true;
+    /**
+     * @dev ERC20 transferFrom function. Overridden to maintain holder count variable.
+     */
+    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
+        _updateCountOnTransfer(sender, recipient, amount);
+        return super.transferFrom(sender, recipient, amount);
     }
 
     function burn(uint256 amount) public {
@@ -64,6 +67,23 @@ contract Token is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUpgra
 
     /** @dev Protected UUPS upgrade authorization fuction */
     function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    /**
+     * @dev Internal function to manage the holderCount variable that should be called
+     *      BEFORE transfers alter balances.
+     */
+    function _updateCountOnTransfer(address from, address to, uint256 amount) private {
+        // Transfers from and to the same address don't change the holder count ever.
+        if (from == to) return;
+
+        if (balanceOf(to) == 0 && amount > 0) {
+            _holderCount++;
+        }
+
+        if (balanceOf(from) == amount && amount > 0) {
+            _holderCount--;
+        }
+    }
 
     modifier onlyBridge {
         require(msg.sender == _bridgeContractAddress, "Can be called only by bridge contract");   

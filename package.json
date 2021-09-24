@@ -5,7 +5,10 @@
   "repository": "https://github.com/Emanate-official/emt-token",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "compile": "truffle compile"
+    "compile": "truffle compile",
+    "deploy": "truffle migrate --reset",
+    "test": "truffle test",
+    "verify": "truffle run verify Token"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
